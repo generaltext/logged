@@ -1,5 +1,5 @@
 // The event envelope. One JSON object per line in the log; immutable once
-// written. LOGGED has exactly three event types — the simplest instance of the
+// written. Logged has exactly three event types — the simplest instance of the
 // event-sourced model: log.entry (a new line), log.edit (fix an earlier line),
 // log.delete (tombstone one). Edits and deletes are new events, never rewrites.
 

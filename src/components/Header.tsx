@@ -30,8 +30,8 @@ export function Header({
   return (
     <header className="flex flex-none items-center gap-3 border-b bg-[var(--panel)] px-4 py-2.5">
       <div className="flex items-center gap-2">
-        <span className="text-sm font-bold tracking-[0.2em]" style={{ color: 'var(--accent)' }}>
-          LOGGED
+        <span className="text-sm font-bold tracking-wide" style={{ color: 'var(--accent)' }}>
+          Logged
         </span>
       </div>
       {/* who's here now (shared logs only) */}

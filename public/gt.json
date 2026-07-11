@@ -1,6 +1,6 @@
 {
   "name": "logged",
-  "displayName": "LOGGED",
+  "displayName": "Logged",
   "version": "0.1.0",
   "gtApi": "^1.0",
   "blurb": "A captain's log for your ideas: dense, timestamped, hashtag-filtered. Type, hit enter, it's on the record.",

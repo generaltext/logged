@@ -1,4 +1,4 @@
-# LOGGED
+# Logged
 
 A captain's log for capturing ideas — dense, timestamped, hashtag-filtered — built as a
 [General Text](https://www.generaltext.org) app. One input pinned to the bottom; you

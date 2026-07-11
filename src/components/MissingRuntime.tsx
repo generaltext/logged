@@ -15,7 +15,7 @@ export function MissingRuntime({ onTryDemo }: { onTryDemo: () => void }) {
             <ScrollText size={20} />
           </span>
           <div className="leading-tight">
-            <h1 className="text-sm font-bold tracking-[0.2em]" style={{ color: 'var(--accent)' }}>LOGGED</h1>
+            <h1 className="text-lg font-bold tracking-wide" style={{ color: 'var(--accent)' }}>Logged</h1>
             <p className="mt-1 text-xs" style={{ color: 'var(--muted)' }}>A General Text app</p>
           </div>
         </div>
