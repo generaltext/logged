@@ -1,6 +1,6 @@
 # Logged
 
-A captain's log for capturing ideas — dense, timestamped, hashtag-filtered — built as a
+A captain's log for capturing ideas (dense, timestamped, hashtag-filtered), built as a
 [General Text](https://www.generaltext.org) app. One input pinned to the bottom; you
 type, hit enter, and the moment is logged onto the top of the stack.
 
@@ -27,14 +27,14 @@ Text, `vite preview` and install by URL (Settings → Apps → Install by URL).
 
 The source of truth is an **append-only event log**; the UI is a **materialized
 projection** rebuilt by folding it. An append-only JSONL log is the structure that merges
-cleanest under General Text's character-level CRDT — and a captain's log is natively
+cleanest under General Text's character-level CRDT, and a captain's log is natively
 append-only, so this is the platform's happy path. Just three event types:
 
 - `log.entry` — a new line in the stream (`{ body, tags }`). ~99% of events.
 - `log.edit` — replace the text of an earlier entry (last-writer-wins by `ts`).
 - `log.delete` — tombstone an earlier entry (hidden, kept in history).
 
-Edits and deletes are **new events**, never rewrites — that's what keeps concurrent
+Edits and deletes are **new events**, never rewrites: that's what keeps concurrent
 appends merging cleanly and the cache correct.
 
 - **`lib/events.ts`** — the event envelope (`{ id, ts, actor, type, subject, data }`).
