@@ -1,0 +1,13 @@
+{
+  "name": "logged",
+  "displayName": "Logged",
+  "version": "0.1.0",
+  "gtApi": "^1.0",
+  "blurb": "A captain's log for your ideas: dense, timestamped, hashtag-filtered. Type, hit enter, it's on the record.",
+  "color": "green",
+  "tags": ["journal", "notes", "capture", "log", "timeline"],
+  "icon": {
+    "kind": "svg",
+    "value": "<svg viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 6h2M4 12h2M4 18h2'/><path d='M10 6h10M10 12h7M10 18h9'/></svg>"
+  }
+}
