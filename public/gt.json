@@ -1,9 +1,9 @@
 {
   "name": "logged",
   "displayName": "Logged",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "gtApi": "^1.0",
-  "blurb": "A captain's log for your ideas: dense, timestamped, hashtag-filtered. Type, hit enter, it's on the record.",
+  "blurb": "A captain's log for your ideas: dense, timestamped, hashtag-filtered. Type, hit enter, it's logged.",
   "color": "green",
   "tags": ["journal", "notes", "capture", "log", "timeline"],
   "icon": {
