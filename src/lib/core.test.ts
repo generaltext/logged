@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest'
 import { parseTags } from './tags'
 import { parseInline, type Inline } from './inline'
 import { applyEvent, emptyState, liveEntries, tagCounts, actorCount } from './reducer'
-import { appendLine, foldTail, isShardPath, shardForDate } from './log'
+import { appendLine, foldFrom, isShardPath, shardForDate } from './log'
 import { serializeEvent, type LoggedEvent } from './events'
 
 function ev(partial: Partial<LoggedEvent> & Pick<LoggedEvent, 'type' | 'subject'>): LoggedEvent {
@@ -160,18 +160,47 @@ describe('log shards', () => {
     const l2 = serializeEvent(ev({ id: 'e2', type: 'log.entry', subject: 'ent_2', data: { body: 'two', tags: [] } }))
 
     const content = appendLine(appendLine('', l1), l2)
-    const c1 = foldTail(s, content.slice(0, content.indexOf('\n') + 1), 0)
+    const c1 = foldFrom(s, content.slice(0, content.indexOf('\n') + 1), 0)
     expect(liveEntries(s)).toHaveLength(1)
 
     // fold the rest from the cursor → picks up l2, consumes to the end
-    const c2 = foldTail(s, content, c1)
+    const c2 = foldFrom(s, content, c1)
     expect(liveEntries(s)).toHaveLength(2)
     expect(c2).toBe(content.length)
 
     // a half-synced trailing line (no newline yet) is not consumed, cursor holds
     const partial = content + '{"id":"e3","type":"log.entry"'
-    const c3 = foldTail(s, partial, c2)
+    const c3 = foldFrom(s, partial, c2)
     expect(liveEntries(s)).toHaveLength(2)
     expect(c3).toBe(c2)
+  })
+
+  it('a full refold picks up events a CRDT merge inserted before the old offset', () => {
+    // Regression: a concurrent writer's events can land *before* a previously
+    // recorded char offset. A naive tail-slice from that offset skips them; the
+    // store guards this by only trusting the offset when the content still
+    // starts with the exact prefix it folded, else refolding from 0.
+    const line = (e: LoggedEvent) => serializeEvent(e) + '\n'
+    const local = ev({ id: 'e_local', type: 'log.entry', subject: 'ent_local', data: { body: 'local', tags: [] } })
+    const remote = ev({ id: 'e_remote', type: 'log.entry', subject: 'ent_remote', data: { body: 'remote', tags: [] } })
+    const s = emptyState()
+
+    // we fold our own line and remember the prefix + offset
+    const mine = line(local)
+    const offset = foldFrom(s, mine, 0)
+    expect(Object.keys(s.entries)).toEqual(['ent_local'])
+
+    // merge reorders: the remote event is now ordered *before* ours
+    const merged = line(remote) + line(local)
+    // the store's guard: `mine` is no longer a prefix of `merged` → refold from 0
+    expect(merged.startsWith(mine)).toBe(false)
+    foldFrom(s, merged, 0)
+    expect(Object.keys(s.entries).sort()).toEqual(['ent_local', 'ent_remote'])
+
+    // and a naive tail-slice from the stale offset would indeed have missed it
+    const naive = emptyState()
+    applyEvent(naive, local)
+    foldFrom(naive, merged, offset)
+    expect(naive.entries['ent_remote']).toBeUndefined()
   })
 })
