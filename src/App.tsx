@@ -30,9 +30,14 @@ export function App() {
     setSearch(q.get('q') ?? '')
   })
 
+  // `state` is a ref the store mutates in place, so its identity never changes and
+  // the rule is wrong to call `version` redundant — it is the ONLY recompute signal.
+  // Drop it and the stream freezes on first render.
+  /* eslint-disable react-hooks/exhaustive-deps */
   const entries = useMemo(() => liveEntries(state), [state, version])
   const tags = useMemo(() => tagCounts(state), [state, version])
   const showActor = useMemo(() => actorCount(state) > 1, [state, version])
+  /* eslint-enable react-hooks/exhaustive-deps */
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase()
