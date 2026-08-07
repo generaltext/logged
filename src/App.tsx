@@ -7,12 +7,27 @@ import { Header } from './components/Header'
 import { FilterBar } from './components/FilterBar'
 import { Stream } from './components/Stream'
 import { Composer } from './components/Composer'
+import { useGtLocation } from './lib/gt-location'
 
 export function App() {
   const { ready, connected, state, version, dispatch, presentUsers, typingUsers, setTyping } =
     useStore()
   const [active, setActive] = useState<Set<string>>(new Set())
   const [search, setSearch] = useState('')
+
+  // One stream, no records to open — the tag filter and search are the whole view,
+  // so they live in the query and replace rather than stack history.
+  const locationTags = [...active].sort().join(',')
+  const loggedSearch = new URLSearchParams()
+  if (locationTags) loggedSearch.set('tags', locationTags)
+  if (search) loggedSearch.set('q', search)
+  const loggedQs = loggedSearch.toString()
+  useGtLocation(`/${loggedQs ? `?${loggedQs}` : ''}`, (path) => {
+    const q = new URLSearchParams(path.slice(1).split('?')[1] ?? '')
+    const tags = q.get('tags')
+    setActive(new Set(tags ? tags.split(',').filter(Boolean) : []))
+    setSearch(q.get('q') ?? '')
+  })
 
   const entries = useMemo(() => liveEntries(state), [state, version])
   const tags = useMemo(() => tagCounts(state), [state, version])
