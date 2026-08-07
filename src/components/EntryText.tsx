@@ -1,4 +1,5 @@
 import { Fragment, type ReactNode } from 'react'
+
 import { parseInline, type Inline } from '../lib/inline'
 import { tagColorClass } from '../lib/tags'
 
@@ -15,7 +16,9 @@ export function EntryText({
   onToggleTag: (tag: string) => void
 }) {
   return (
-    <span className="whitespace-pre-wrap break-words">{render(parseInline(body), onToggleTag)}</span>
+    <span className="break-words whitespace-pre-wrap">
+      {render(parseInline(body), onToggleTag)}
+    </span>
   )
 }
 

@@ -58,7 +58,8 @@ export async function loadCache(workspaceId: string): Promise<{ state: State } |
   try {
     const db = await open()
     const cached = await idbGet<CachedProjection>(db, cacheKey(workspaceId))
-    if (!cached || cached.version !== CACHE_VERSION || cached.workspaceId !== workspaceId) return null
+    if (!cached || cached.version !== CACHE_VERSION || cached.workspaceId !== workspaceId)
+      return null
     const s = emptyState()
     s.entries = cached.entries
     s.applied = new Set(cached.applied)

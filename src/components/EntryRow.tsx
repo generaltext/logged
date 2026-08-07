@@ -1,9 +1,10 @@
-import { useEffect, useRef, useState } from 'react'
 import { Pencil, Trash2, Check, X } from 'lucide-react'
-import type { EntryRecord } from '../lib/reducer'
-import { EntryText } from './EntryText'
+import { useEffect, useRef, useState } from 'react'
+
 import { handleMarkdownKey, handleUrlPaste } from '../lib/editor'
 import { actorColor, formatClockShort, formatDateTime, initials, relativeTime } from '../lib/format'
+import type { EntryRecord } from '../lib/reducer'
+import { EntryText } from './EntryText'
 
 export function EntryRow({
   entry,

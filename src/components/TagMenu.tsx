@@ -1,5 +1,6 @@
-import { useEffect, useRef, useState } from 'react'
 import { Tag, ChevronDown, Check } from 'lucide-react'
+import { useEffect, useRef, useState } from 'react'
+
 import { tagColorClass } from '../lib/tags'
 
 /**
@@ -38,7 +39,8 @@ export function TagMenu({
   }, [open])
 
   const count = active.size
-  const activeStyle = count > 0 ? { color: 'var(--accent)', borderColor: 'var(--accent)' } : undefined
+  const activeStyle =
+    count > 0 ? { color: 'var(--accent)', borderColor: 'var(--accent)' } : undefined
 
   return (
     <div className="relative flex-none" ref={ref}>
@@ -62,9 +64,7 @@ export function TagMenu({
       </button>
 
       {open && (
-        <div
-          className="absolute right-0 z-20 mt-1 max-h-[60vh] w-60 overflow-y-auto rounded-md border bg-[var(--panel)] p-1 shadow-lg"
-        >
+        <div className="absolute right-0 z-20 mt-1 max-h-[60vh] w-60 overflow-y-auto rounded-md border bg-[var(--panel)] p-1 shadow-lg">
           {tags.length === 0 ? (
             <div className="px-2 py-3 text-center text-[0.78rem]" style={{ color: 'var(--muted)' }}>
               No tags yet. Type <span className="tag tag-teal">#tag</span> in an entry.
@@ -85,7 +85,10 @@ export function TagMenu({
                       style={{ color: 'var(--accent)', visibility: on ? 'visible' : 'hidden' }}
                     />
                     <span className={`tag ${tagColorClass(tag)}`}>#{tag}</span>
-                    <span className="ml-auto text-xs tabular-nums" style={{ color: 'var(--muted)' }}>
+                    <span
+                      className="ml-auto text-xs tabular-nums"
+                      style={{ color: 'var(--muted)' }}
+                    >
                       {c}
                     </span>
                   </button>

@@ -33,7 +33,12 @@ interface Found {
 function findFirst(rest: string, depth: number): Found | null {
   const rules: Array<() => Found | null> = [
     () => match(CODE, rest, (m) => ({ t: 'code', v: m[1]! })),
-    () => match(LINK, rest, (m) => ({ t: 'link', href: m[2]!, children: parseInline(m[1]!, depth + 1) })),
+    () =>
+      match(LINK, rest, (m) => ({
+        t: 'link',
+        href: m[2]!,
+        children: parseInline(m[1]!, depth + 1),
+      })),
     () => match(STRONG, rest, (m) => ({ t: 'strong', children: parseInline(m[1]!, depth + 1) })),
     () => match(EM, rest, (m) => ({ t: 'em', children: parseInline(m[1]!, depth + 1) })),
     () => match(TAG, rest, (m) => ({ t: 'tag', label: m[1]!.toLowerCase(), raw: m[0] })),

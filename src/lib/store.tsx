@@ -7,14 +7,15 @@ import {
   useState,
   type ReactNode,
 } from 'react'
-import { type Actor, type Draft, type LoggedEvent, serializeEvent } from './events'
-import { applyEvent, emptyState, type State } from './reducer'
-import { appendLine, currentShardPath, foldFrom, isShardPath } from './log'
-import { loadCache, saveCache } from './cache'
-import { newId, ulid } from './ids'
-import { buildSeedShards } from './seed'
-import { actorColor } from './format'
+
 import type { GtAwareness } from '../gt.d'
+import { loadCache, saveCache } from './cache'
+import { type Actor, type Draft, type LoggedEvent, serializeEvent } from './events'
+import { actorColor } from './format'
+import { newId, ulid } from './ids'
+import { appendLine, currentShardPath, foldFrom, isShardPath } from './log'
+import { applyEvent, emptyState, type State } from './reducer'
+import { buildSeedShards } from './seed'
 
 export interface PresenceUser {
   id: string

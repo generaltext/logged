@@ -32,8 +32,8 @@ body {
    accent, auto light/dark. Mono throughout — a log reads as a log. */
 :root {
   color-scheme: light;
-  --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
-    monospace;
+  --font-mono:
+    ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono', monospace;
 
   --bg: #fbfbfa;
   --panel: #ffffff;

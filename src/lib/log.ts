@@ -2,8 +2,8 @@
 // pure; the store owns the window.gt reads/writes and the freshest-content
 // bookkeeping that makes appends safe.
 
-import { applyEvent, type State } from './reducer'
 import { parseEvent } from './events'
+import { applyEvent, type State } from './reducer'
 
 export const DATA_VERSION = 'v0'
 export const LOG_DIR = `${DATA_VERSION}/log`

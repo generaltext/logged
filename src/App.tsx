@@ -1,13 +1,14 @@
 import { useMemo, useState } from 'react'
-import { useStore } from './lib/store'
-import { actorCount, liveEntries, tagCounts, type EntryRecord } from './lib/reducer'
-import { parseTags } from './lib/tags'
-import { newId } from './lib/ids'
-import { Header } from './components/Header'
-import { FilterBar } from './components/FilterBar'
-import { Stream } from './components/Stream'
+
 import { Composer } from './components/Composer'
+import { FilterBar } from './components/FilterBar'
+import { Header } from './components/Header'
+import { Stream } from './components/Stream'
 import { useGtLocation } from './lib/gt-location'
+import { newId } from './lib/ids'
+import { actorCount, liveEntries, tagCounts, type EntryRecord } from './lib/reducer'
+import { useStore } from './lib/store'
+import { parseTags } from './lib/tags'
 
 export function App() {
   const { ready, connected, state, version, dispatch, presentUsers, typingUsers, setTyping } =

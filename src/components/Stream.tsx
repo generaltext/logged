@@ -1,8 +1,9 @@
-import { Fragment, useLayoutEffect, useRef, useState } from 'react'
 import { ArrowDown } from 'lucide-react'
+import { Fragment, useLayoutEffect, useRef, useState } from 'react'
+
+import { dayKey, formatDayHeading } from '../lib/format'
 import type { EntryRecord } from '../lib/reducer'
 import { EntryRow } from './EntryRow'
-import { dayKey, formatDayHeading } from '../lib/format'
 
 /**
  * The stream: oldest at the top, newest at the bottom, next to the input. Opens
@@ -85,9 +86,9 @@ export function Stream({
               return (
                 <Fragment key={entry.id}>
                   {showDivider && (
-                    <div className="flex items-center gap-3 px-4 pb-1 pt-4">
+                    <div className="flex items-center gap-3 px-4 pt-4 pb-1">
                       <span
-                        className="text-[0.68rem] font-semibold uppercase tracking-wider"
+                        className="text-[0.68rem] font-semibold tracking-wider uppercase"
                         style={{ color: 'var(--muted)' }}
                       >
                         {formatDayHeading(entry.createdAt)}
@@ -117,7 +118,7 @@ export function Stream({
             setNewCount(0)
             toBottom()
           }}
-          className="absolute bottom-3 left-1/2 -translate-x-1/2 inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs shadow-md"
+          className="absolute bottom-3 left-1/2 inline-flex -translate-x-1/2 items-center gap-1.5 rounded-full border px-3 py-1 text-xs shadow-md"
           style={{ background: 'var(--accent)', color: '#fff', borderColor: 'transparent' }}
         >
           <ArrowDown size={13} />

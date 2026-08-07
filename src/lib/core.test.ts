@@ -1,9 +1,10 @@
 import { describe, it, expect } from 'vitest'
-import { parseTags } from './tags'
-import { parseInline, type Inline } from './inline'
-import { applyEvent, emptyState, liveEntries, tagCounts, actorCount } from './reducer'
-import { appendLine, foldFrom, isShardPath, shardForDate } from './log'
+
 import { serializeEvent, type LoggedEvent } from './events'
+import { parseInline, type Inline } from './inline'
+import { appendLine, foldFrom, isShardPath, shardForDate } from './log'
+import { applyEvent, emptyState, liveEntries, tagCounts, actorCount } from './reducer'
+import { parseTags } from './tags'
 
 function ev(partial: Partial<LoggedEvent> & Pick<LoggedEvent, 'type' | 'subject'>): LoggedEvent {
   return {
@@ -24,7 +25,6 @@ describe('tags', () => {
   it('ignores # mid-word and in url fragments', () => {
     expect(parseTags('email a#b, see http://x.com/p#frag')).toEqual([])
   })
-
 })
 
 describe('inline markdown', () => {
@@ -94,17 +94,41 @@ describe('inline markdown', () => {
 describe('reducer', () => {
   it('creates, edits (LWW), and tombstones entries', () => {
     const s = emptyState()
-    applyEvent(s, ev({ type: 'log.entry', subject: 'ent_1', ts: '2026-07-09T10:00:00.000Z', data: { body: 'first #a', tags: ['a'] } }))
+    applyEvent(
+      s,
+      ev({
+        type: 'log.entry',
+        subject: 'ent_1',
+        ts: '2026-07-09T10:00:00.000Z',
+        data: { body: 'first #a', tags: ['a'] },
+      }),
+    )
     expect(liveEntries(s)).toHaveLength(1)
     expect(liveEntries(s)[0]!.body).toBe('first #a')
 
     // a later edit wins…
-    applyEvent(s, ev({ type: 'log.edit', subject: 'ent_1', ts: '2026-07-09T11:00:00.000Z', data: { body: 'edited #b', tags: ['b'] } }))
+    applyEvent(
+      s,
+      ev({
+        type: 'log.edit',
+        subject: 'ent_1',
+        ts: '2026-07-09T11:00:00.000Z',
+        data: { body: 'edited #b', tags: ['b'] },
+      }),
+    )
     expect(liveEntries(s)[0]!.body).toBe('edited #b')
     expect(liveEntries(s)[0]!.editedAt).toBe('2026-07-09T11:00:00.000Z')
 
     // …an older edit (out-of-order arrival) does not
-    applyEvent(s, ev({ type: 'log.edit', subject: 'ent_1', ts: '2026-07-09T10:30:00.000Z', data: { body: 'stale', tags: [] } }))
+    applyEvent(
+      s,
+      ev({
+        type: 'log.edit',
+        subject: 'ent_1',
+        ts: '2026-07-09T10:30:00.000Z',
+        data: { body: 'stale', tags: [] },
+      }),
+    )
     expect(liveEntries(s)[0]!.body).toBe('edited #b')
 
     applyEvent(s, ev({ type: 'log.delete', subject: 'ent_1' }))
@@ -113,7 +137,12 @@ describe('reducer', () => {
 
   it('is idempotent on duplicate event ids', () => {
     const s = emptyState()
-    const e = ev({ id: 'evt_x', type: 'log.entry', subject: 'ent_1', data: { body: 'x', tags: [] } })
+    const e = ev({
+      id: 'evt_x',
+      type: 'log.entry',
+      subject: 'ent_1',
+      data: { body: 'x', tags: [] },
+    })
     applyEvent(s, e)
     applyEvent(s, e)
     expect(liveEntries(s)).toHaveLength(1)
@@ -121,17 +150,62 @@ describe('reducer', () => {
 
   it('orders the stream by original createdAt, stable across edits', () => {
     const s = emptyState()
-    applyEvent(s, ev({ id: 'evt_a', type: 'log.entry', subject: 'ent_a', ts: '2026-07-09T10:00:00.000Z', data: { body: 'A', tags: [] } }))
-    applyEvent(s, ev({ id: 'evt_b', type: 'log.entry', subject: 'ent_b', ts: '2026-07-09T11:00:00.000Z', data: { body: 'B', tags: [] } }))
+    applyEvent(
+      s,
+      ev({
+        id: 'evt_a',
+        type: 'log.entry',
+        subject: 'ent_a',
+        ts: '2026-07-09T10:00:00.000Z',
+        data: { body: 'A', tags: [] },
+      }),
+    )
+    applyEvent(
+      s,
+      ev({
+        id: 'evt_b',
+        type: 'log.entry',
+        subject: 'ent_b',
+        ts: '2026-07-09T11:00:00.000Z',
+        data: { body: 'B', tags: [] },
+      }),
+    )
     // edit the older one later — it must NOT jump to the bottom
-    applyEvent(s, ev({ id: 'evt_a2', type: 'log.edit', subject: 'ent_a', ts: '2026-07-09T12:00:00.000Z', data: { body: 'A2', tags: [] } }))
+    applyEvent(
+      s,
+      ev({
+        id: 'evt_a2',
+        type: 'log.edit',
+        subject: 'ent_a',
+        ts: '2026-07-09T12:00:00.000Z',
+        data: { body: 'A2', tags: [] },
+      }),
+    )
     expect(liveEntries(s).map((e) => e.id)).toEqual(['ent_a', 'ent_b'])
   })
 
   it('counts tags and distinct actors over live entries', () => {
     const s = emptyState()
-    applyEvent(s, ev({ id: 'e1', type: 'log.entry', subject: 'ent_1', actor: { id: 'u1', name: 'You' }, data: { body: '#x #y', tags: ['x', 'y'] } }))
-    applyEvent(s, ev({ id: 'e2', type: 'log.entry', subject: 'ent_2', actor: { id: 'u2', name: 'Ada' }, data: { body: '#x', tags: ['x'] } }))
+    applyEvent(
+      s,
+      ev({
+        id: 'e1',
+        type: 'log.entry',
+        subject: 'ent_1',
+        actor: { id: 'u1', name: 'You' },
+        data: { body: '#x #y', tags: ['x', 'y'] },
+      }),
+    )
+    applyEvent(
+      s,
+      ev({
+        id: 'e2',
+        type: 'log.entry',
+        subject: 'ent_2',
+        actor: { id: 'u2', name: 'Ada' },
+        data: { body: '#x', tags: ['x'] },
+      }),
+    )
     expect(tagCounts(s)).toEqual([
       { tag: 'x', count: 2 },
       { tag: 'y', count: 1 },
@@ -156,8 +230,12 @@ describe('log shards', () => {
 
   it('folds only complete lines and resumes from the cursor', () => {
     const s = emptyState()
-    const l1 = serializeEvent(ev({ id: 'e1', type: 'log.entry', subject: 'ent_1', data: { body: 'one', tags: [] } }))
-    const l2 = serializeEvent(ev({ id: 'e2', type: 'log.entry', subject: 'ent_2', data: { body: 'two', tags: [] } }))
+    const l1 = serializeEvent(
+      ev({ id: 'e1', type: 'log.entry', subject: 'ent_1', data: { body: 'one', tags: [] } }),
+    )
+    const l2 = serializeEvent(
+      ev({ id: 'e2', type: 'log.entry', subject: 'ent_2', data: { body: 'two', tags: [] } }),
+    )
 
     const content = appendLine(appendLine('', l1), l2)
     const c1 = foldFrom(s, content.slice(0, content.indexOf('\n') + 1), 0)
@@ -181,8 +259,18 @@ describe('log shards', () => {
     // store guards this by only trusting the offset when the content still
     // starts with the exact prefix it folded, else refolding from 0.
     const line = (e: LoggedEvent) => serializeEvent(e) + '\n'
-    const local = ev({ id: 'e_local', type: 'log.entry', subject: 'ent_local', data: { body: 'local', tags: [] } })
-    const remote = ev({ id: 'e_remote', type: 'log.entry', subject: 'ent_remote', data: { body: 'remote', tags: [] } })
+    const local = ev({
+      id: 'e_local',
+      type: 'log.entry',
+      subject: 'ent_local',
+      data: { body: 'local', tags: [] },
+    })
+    const remote = ev({
+      id: 'e_remote',
+      type: 'log.entry',
+      subject: 'ent_remote',
+      data: { body: 'remote', tags: [] },
+    })
     const s = emptyState()
 
     // we fold our own line and remember the prefix + offset

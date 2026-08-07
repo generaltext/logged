@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
-import type { PresenceUser } from '../lib/store'
+
 import { initials } from '../lib/format'
+import type { PresenceUser } from '../lib/store'
 
 // A live local clock, ticking once a second — a quiet terminal cue in the header.
 function useNow(): Date {
