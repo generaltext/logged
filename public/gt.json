@@ -1,9 +1,10 @@
 {
   "name": "logged",
   "displayName": "Logged",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "gtApi": "^1.0",
   "blurb": "A captain's log for your ideas: dense, timestamped, hashtag-filtered. Type, hit enter, it's logged.",
+  "repository": "https://github.com/generaltext/logged",
   "color": "green",
   "tags": ["journal", "notes", "capture", "log", "timeline"],
   "icon": {
